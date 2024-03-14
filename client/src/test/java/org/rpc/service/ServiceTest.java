@@ -14,6 +14,6 @@ public class ServiceTest {
         System.out.println(s);
 
         System.out.println(s.list());
-        System.out.println(s.embeddings());
+        System.out.println(s.embeddings("100","99999"));
     }
 }

@@ -1,6 +1,7 @@
 package org.rpc.processor;
 
 import org.rpc.http.XGET;
+import org.rpc.http.XHeader;
 import org.rpc.http.XHeaders;
 import org.rpc.http.XPOST;
 import org.rpc.processor.impl.HttpRPCCallInfo;
@@ -9,7 +10,9 @@ import org.rpc.processor.impl.HttpRpcReply;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,13 +31,29 @@ public class ServiceProxy implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-        Annotation[] tags = method.getDeclaredAnnotations();
-
         HttpRPCCallInfo callInfo = new HttpRPCCallInfo();
-        ParameterizedType returnType = (ParameterizedType) method.getGenericReturnType();
-        Type[] types = returnType.getActualTypeArguments();
-        callInfo.returnType = types[0];
 
+        callInfo.returnType = returnTypes(method);
+
+        _processMethodTags(method, callInfo);
+
+        Annotation[][] tags = method.getParameterAnnotations();
+        List<Annotation> methodParams = Stream.of(tags).flatMap(Stream::of).collect(Collectors.toList());
+
+        for (int index = 0; index < methodParams.size(); index++) {
+            Annotation param = methodParams.get(index);
+            if (param instanceof XHeader) {
+                XHeader headerParam = (XHeader) param;
+                callInfo.headers.put(headerParam.value(), args[index].toString());
+            }
+        }
+
+        return new HttpRpcReply<>(callInfo.method, callInfo.url, callInfo.returnType, callInfo.headers);
+
+    }
+
+    private void _processMethodTags(Method method, HttpRPCCallInfo callInfo) {
+        Annotation[] tags = method.getDeclaredAnnotations();
         for (Annotation tag : tags) {
 
             if (tag instanceof XGET) {
@@ -55,14 +74,22 @@ public class ServiceProxy implements InvocationHandler {
                 callInfo.headers.putAll(_headers(headersParam));
             }
         }
-        return new HttpRpcReply<>(callInfo.method, callInfo.url, callInfo.returnType, callInfo.headers);
+    }
 
+    private static Type returnTypes(Method method) {
+        ParameterizedType returnType = (ParameterizedType) method.getGenericReturnType();
+        Type types = returnType.getActualTypeArguments()[0];
+        return types;
     }
 
     private static Map<String, String> _headers(XHeaders headers) {
         return Stream.of(headers.value())
-                .map(x -> x.split(":"))
+                .map(_parseHeader())
                 .collect(Collectors.toMap(x -> x[0], x -> x[1].trim()));
+    }
+
+    private static Function<String, String[]> _parseHeader() {
+        return x -> x.split(":");
     }
 
 }
