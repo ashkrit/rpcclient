@@ -1,22 +1,15 @@
 package org.rpc.processor.impl;
 
+import com.google.gson.Gson;
 import org.rpc.processor.RpcReply;
-
-import java.lang.reflect.Type;
-import java.util.Map;
 
 public class HttpRpcReply<T> implements RpcReply<T> {
 
-    private final String method;
-    private final String url;
-    private final Class<T> returnType;
-    private final Map<String, String> headers;
+    private final HttpRPCCallInfo callInfo;
 
-    public HttpRpcReply(String method, String url, Type type, Map<String, String> headers) {
-        this.method = method;
-        this.url = url;
-        this.returnType = (Class<T>) type;
-        this.headers = headers;
+
+    public HttpRpcReply(HttpRPCCallInfo callInfo) {
+        this.callInfo = callInfo;
     }
 
     @Override
@@ -26,11 +19,14 @@ public class HttpRpcReply<T> implements RpcReply<T> {
 
     @Override
     public String toString() {
+        String bodyText = callInfo.body != null ? new Gson().toJson(callInfo.body) : "NA";
         return "HttpRpcReply{" +
-                "method='" + method + '\'' +
-                ", url='" + url + '\'' +
-                ", header='" + headers + '\'' +
-                ", returnType=" + returnType +
+                " method='" + callInfo.method + '\'' +
+                ", header='" + callInfo.headers + '\'' +
+                ", url='" + callInfo.url + '\'' +
+                ", queryParams='" + callInfo.queryParams + '\'' +
+                ", body='" + bodyText + '\'' +
+                ", returnType=" + callInfo.returnType +
                 '}';
     }
 }

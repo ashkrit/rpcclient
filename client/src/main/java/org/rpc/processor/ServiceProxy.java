@@ -1,9 +1,6 @@
 package org.rpc.processor;
 
-import org.rpc.http.XGET;
-import org.rpc.http.XHeader;
-import org.rpc.http.XHeaders;
-import org.rpc.http.XPOST;
+import org.rpc.http.*;
 import org.rpc.processor.impl.HttpRPCCallInfo;
 import org.rpc.processor.impl.HttpRpcReply;
 
@@ -45,10 +42,15 @@ public class ServiceProxy implements InvocationHandler {
             if (param instanceof XHeader) {
                 XHeader headerParam = (XHeader) param;
                 callInfo.headers.put(headerParam.value(), args[index].toString());
+            } else if (param instanceof XQuery) {
+                XQuery queryParam = (XQuery) param;
+                callInfo.queryParams.put(queryParam.value(), args[index].toString());
+            } else if (param instanceof XBody) {
+                callInfo.body = args[index];
             }
         }
 
-        return new HttpRpcReply<>(callInfo.method, callInfo.url, callInfo.returnType, callInfo.headers);
+        return new HttpRpcReply<>(callInfo);
 
     }
 

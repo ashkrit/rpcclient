@@ -14,6 +14,7 @@ public class ServiceTest {
         System.out.println(s);
 
         System.out.println(s.list());
-        System.out.println(s.embeddings("100","99999"));
+        System.out.println(s.embeddings("100","99999" , new Embedding("sentence","what is LLM")));
+        System.out.println(s.search("google"));
     }
 }

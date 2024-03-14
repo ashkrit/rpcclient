@@ -1,9 +1,6 @@
 package org.rpc.service;
 
-import org.rpc.http.XGET;
-import org.rpc.http.XHeader;
-import org.rpc.http.XHeaders;
-import org.rpc.http.XPOST;
+import org.rpc.http.*;
 import org.rpc.processor.RpcReply;
 
 public interface SampleService {
@@ -15,5 +12,10 @@ public interface SampleService {
 
     @XPOST("embedding")
     @XHeaders({"Content-Type: application/json"})
-    RpcReply<Models> embeddings(@XHeader("api") String key, @XHeader("token") String token);
+    RpcReply<Models> embeddings(@XHeader("api") String key, @XHeader("token") String token, @XBody Embedding embedding);
+
+
+    @XGET("search")
+    @XHeaders({"Content-Type: application/json"})
+    RpcReply<Models> search(@XQuery("q") String searchText);
 }
