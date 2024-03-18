@@ -5,8 +5,10 @@ import org.rpc.processor.impl.HttpRPCCallInfo;
 import org.rpc.processor.impl.HttpRpcReply;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.HashMap;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -33,7 +35,13 @@ public class ServiceProxy implements InvocationHandler {
         callInfo.returnType = returnTypes(method);
 
         _processMethodTags(method, callInfo);
+        _processMethodParams(method, args, callInfo);
 
+        return new HttpRpcReply<>(callInfo);
+
+    }
+
+    private static void _processMethodParams(Method method, Object[] args, HttpRPCCallInfo callInfo) {
         Annotation[][] tags = method.getParameterAnnotations();
         List<Annotation> methodParams = Stream.of(tags).flatMap(Stream::of).collect(Collectors.toList());
 
@@ -49,9 +57,6 @@ public class ServiceProxy implements InvocationHandler {
                 callInfo.body = args[index];
             }
         }
-
-        return new HttpRpcReply<>(callInfo);
-
     }
 
     private void _processMethodTags(Method method, HttpRPCCallInfo callInfo) {
@@ -80,8 +85,7 @@ public class ServiceProxy implements InvocationHandler {
 
     private static Type returnTypes(Method method) {
         ParameterizedType returnType = (ParameterizedType) method.getGenericReturnType();
-        Type types = returnType.getActualTypeArguments()[0];
-        return types;
+        return returnType.getActualTypeArguments()[0];
     }
 
     private static Map<String, String> _headers(XHeaders headers) {
