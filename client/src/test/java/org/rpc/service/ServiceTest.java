@@ -15,9 +15,9 @@ public class ServiceTest {
 
     public static void main(String[] args) {
 
-        //_local();
+        _local();
         _google();
-        //_openAI();
+        _openAI();
 
 
     }

@@ -7,6 +7,8 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class HttpCallStack {
@@ -23,8 +25,12 @@ public class HttpCallStack {
 
     private final XHttpClient client;
 
+    private final Map<String, Consumer<XHttpClientCallback>> executor = new HashMap<>();
+
     public HttpCallStack(XHttpClient client) {
         this.client = client;
+        executor.put("GET", this::_get);
+        executor.put("POST", this::_post);
     }
 
     public String buildUrl() {
@@ -50,14 +56,20 @@ public class HttpCallStack {
 
     public void execute(XHttpClientCallback callback) {
 
-        String url = buildUrl();
+        Optional<Consumer<XHttpClientCallback>> executorFn = Optional.ofNullable(executor.get(method));
+        executorFn
+                .ifPresent(executor -> executor.accept(callback));
+        executorFn
+                .orElseThrow(() -> new RuntimeException("Unsupported HTTP method: " + method));
 
-        if (method.equalsIgnoreCase("GET")) {
-            client.get(url, headers, callback);
-        } else if (method.equalsIgnoreCase("POST")) {
-            client.post(url, headers, body, callback);
-        } else {
-            throw new RuntimeException("Unsupported HTTP method: " + method);
-        }
+
+    }
+
+    private void _post(XHttpClientCallback callback) {
+        client.post(buildUrl(), headers, body, callback);
+    }
+
+    private void _get(XHttpClientCallback callback) {
+        client.get(buildUrl(), headers, callback);
     }
 }
