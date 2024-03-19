@@ -11,6 +11,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.rpc.http.client.ApacheHTTPClient;
 import org.rpc.http.client.XHttpClient;
+import org.rpc.service.model.Conversation;
 import org.rpc.service.model.Embedding;
 import org.rpc.service.model.OpenAIEmbedding;
 
@@ -27,6 +28,32 @@ public class ClientApp {
         // _local();
         //openAI();
 
+        //_get();
+        _post();
+
+
+    }
+
+    private static void _post() {
+        XHttpClient client = new ApacheHTTPClient();
+        Conversation conversation = new Conversation("llama2-70b-4096", 0.5f, false);
+        conversation.append("user", "What is prompt Engineering");
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + System.getenv("gorq_key"));
+
+        client.post("https://api.groq.com/openai/v1/chat/completions", headers, conversation, c -> {
+            System.out.println(c.statusCode);
+            if (c.statusCode == 200) {
+                System.out.println(c.reply().get());
+            } else {
+                System.out.println(c.error());
+                System.out.println(c.exception());
+            }
+        });
+    }
+
+    private static void _get() {
         XHttpClient client = new ApacheHTTPClient();
         client.get("http://127.0.0.1:9090/list", Collections.emptyMap(), c -> {
             System.out.println(c.statusCode);
@@ -37,24 +64,6 @@ public class ClientApp {
                 System.out.println(c.exception());
             }
         });
-
-
-        OpenAIEmbedding openAIEmbedding = new OpenAIEmbedding("text-embedding-3-small", "How are you");
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + System.getenv("gpt_key"));
-
-        client.post("https://api.openai.com/v1/embeddings", headers, openAIEmbedding, c -> {
-            System.out.println(c.statusCode);
-            if (c.statusCode == 200) {
-                System.out.println(c.reply().get());
-            } else {
-                System.out.println(c.error());
-                System.out.println(c.exception());
-            }
-        });
-
-
     }
 
     private static void openAI() throws IOException, ParseException {

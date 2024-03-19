@@ -1,12 +1,9 @@
 package org.rpc.service;
 
-import org.rpc.service.model.Embedding;
-import org.rpc.service.model.OpenAIEmbedding;
+import org.rpc.service.model.*;
 import org.rpc.processor.RpcBuilder;
 import org.rpc.processor.RpcReply;
-import org.rpc.service.model.GoogleEmbedding;
 import org.rpc.service.model.GoogleEmbedding.GoogleEmbeddingReply;
-import org.rpc.service.model.ModelInfo;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,11 +12,29 @@ public class ServiceTest {
 
     public static void main(String[] args) {
 
-        _local();
-        _google();
-        _openAI();
+        //_local();
+        //_google();
+        //_openAI();
+        _groq();
 
+    }
 
+    private static void _groq() {
+        RpcBuilder builder = new RpcBuilder().serviceUrl("https://api.groq.com/");
+        GroqService service = builder.create(GroqService.class);
+
+        Conversation conversation = new Conversation("llama2-70b-4096", 0.5f, false);
+        conversation.append("user", "What is prompt Engineering");
+
+        RpcReply<ConversationReply> reply = service.ask("Bearer " + System.getenv("gorq_key"), conversation);
+        reply.execute();
+
+        if (reply.isSuccess()) {
+            System.out.println(reply.value().choices.get(0).message.content);
+        } else {
+            System.out.println(reply.error());
+            System.out.println(reply.exception());
+        }
     }
 
     private static void _openAI() {
