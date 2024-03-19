@@ -15,8 +15,8 @@ public class ServiceTest {
 
     public static void main(String[] args) {
 
-        _local();
-        //_google();
+        //_local();
+        _google();
         //_openAI();
 
 
@@ -30,7 +30,16 @@ public class ServiceTest {
         String apiKey = "Bearer " + System.getenv("gpt_key");
         RpcReply<OpenAIEmbedding.OpenAIEmbeddingReply> reply = openAIService.embedding(apiKey, openAIEmbedding);
 
-        System.out.println(Arrays.toString(reply.value().data.get(0).embedding));
+        reply.execute();
+
+        if (reply.isSuccess()) {
+            System.out.println(Arrays.toString(reply.value().data.get(0).embedding));
+        } else {
+            System.out.println(reply.exception());
+            System.out.println(reply.error());
+        }
+
+
     }
 
     private static void _google() {
@@ -40,7 +49,14 @@ public class ServiceTest {
         RpcReply<GoogleEmbeddingReply> reply = googleAIService
                 .embedding(System.getenv("gemma_key"), createGEmbeddings("how are you", "models/embedding-001"));
 
-        System.out.println(Arrays.toString(reply.value().embedding.values));
+        reply.execute();
+
+        if (reply.isSuccess()) {
+            System.out.println(Arrays.toString(reply.value().embedding.values));
+        } else {
+            System.out.println(reply.error());
+            System.out.println(reply.exception());
+        }
     }
 
     private static GoogleEmbedding createGEmbeddings(String text, String modelName) {
