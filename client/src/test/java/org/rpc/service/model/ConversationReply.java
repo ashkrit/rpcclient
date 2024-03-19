@@ -1,5 +1,7 @@
 package org.rpc.service.model;
 
+import org.rpc.service.model.Conversation.Message;
+
 import java.util.List;
 
 public class ConversationReply {
@@ -13,9 +15,9 @@ public class ConversationReply {
 
     public static class ReplyMessage {
         public final int index;
-        public final Conversation.Message message;
+        public final Message message;
 
-        public ReplyMessage(int index, Conversation.Message message) {
+        public ReplyMessage(int index, Message message) {
             this.index = index;
             this.message = message;
         }

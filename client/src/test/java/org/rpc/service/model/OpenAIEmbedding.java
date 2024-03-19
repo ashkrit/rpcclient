@@ -16,9 +16,9 @@ public class OpenAIEmbedding {
 
     public static class OpenAIEmbeddingReply {
 
-        public final List<OpenAIEmbeddingReply.EmbeddingValue> data;
+        public final List<EmbeddingValue> data;
 
-        public OpenAIEmbeddingReply(List<OpenAIEmbeddingReply.EmbeddingValue> data) {
+        public OpenAIEmbeddingReply(List<EmbeddingValue> data) {
             this.data = data;
         }
 
