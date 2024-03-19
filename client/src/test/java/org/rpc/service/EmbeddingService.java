@@ -8,12 +8,12 @@ import org.rpc.service.model.ModelInfo;
 
 public interface EmbeddingService {
 
-    @XGET("list")
+    @XGET("/list")
     @XHeaders({"Content-Type: application/json"})
     RpcReply<ModelInfo> list();
 
 
-    @XPOST("embedding")
+    @XPOST("/embedding")
     @XHeaders({"Content-Type: application/json"})
     RpcReply<EmbeddingReply> embedding(@XBody Embedding embedding);
 

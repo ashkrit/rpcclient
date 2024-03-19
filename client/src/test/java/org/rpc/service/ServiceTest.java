@@ -15,9 +15,9 @@ public class ServiceTest {
 
     public static void main(String[] args) {
 
-        // _local();
+        _local();
         //_google();
-        _openAI();
+        //_openAI();
 
 
     }
@@ -46,12 +46,11 @@ public class ServiceTest {
     private static GoogleEmbedding createGEmbeddings(String text, String modelName) {
         GoogleEmbedding.ModelPart part = new GoogleEmbedding.ModelPart(text);
         GoogleEmbedding.ModelContent content = new GoogleEmbedding.ModelContent(Collections.singletonList(part));
-        GoogleEmbedding embedding = new GoogleEmbedding(modelName, content);
-        return embedding;
+        return new GoogleEmbedding(modelName, content);
     }
 
     private static void _local() {
-        RpcBuilder builder = new RpcBuilder().serviceUrl("http://localhost:9090");
+        RpcBuilder builder = new RpcBuilder().serviceUrl("http://localhost:9090/");
 
         EmbeddingService s = builder.create(EmbeddingService.class);
 
