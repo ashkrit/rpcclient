@@ -9,9 +9,14 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.rpc.http.client.ApacheHTTPClient;
+import org.rpc.http.client.XHttpClient;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClientApp {
 
@@ -20,6 +25,33 @@ public class ClientApp {
 
         // _local();
         //openAI();
+
+        XHttpClient client = new ApacheHTTPClient();
+        client.get("http://127.0.0.1:9090/list", Collections.emptyMap(), c -> {
+            System.out.println(c.statusCode);
+            if (c.statusCode == 200) {
+                System.out.println(c.reply().get());
+            } else {
+                System.out.println(c.error());
+                System.out.println(c.exception());
+            }
+        });
+
+
+        OpenAIEmbedding openAIEmbedding = new OpenAIEmbedding("text-embedding-3-small", "How are you");
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        //headers.put("Authorization", "Bearer " + System.getenv("gpt_key"));
+
+        client.post("https://api.openai.com/v1/embeddings", headers, openAIEmbedding, c -> {
+            System.out.println(c.statusCode);
+            if (c.statusCode == 200) {
+                System.out.println(c.reply().get());
+            } else {
+                System.out.println(c.error());
+                System.out.println(c.exception());
+            }
+        });
 
 
     }
