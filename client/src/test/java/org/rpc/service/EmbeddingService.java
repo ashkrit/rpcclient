@@ -3,7 +3,6 @@ package org.rpc.service;
 import org.rpc.http.*;
 import org.rpc.service.model.Embedding;
 import org.rpc.service.model.Embedding.EmbeddingReply;
-import org.rpc.processor.RpcReply;
 import org.rpc.service.model.ModelInfo;
 
 public interface EmbeddingService {

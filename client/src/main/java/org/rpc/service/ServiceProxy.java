@@ -1,9 +1,9 @@
-package org.rpc.processor;
+package org.rpc.service;
 
 import org.rpc.http.*;
 import org.rpc.http.client.ApacheHTTPClient;
-import org.rpc.processor.impl.HttpCallStack;
-import org.rpc.processor.impl.HttpRpcReply;
+import org.rpc.service.impl.HttpCallStack;
+import org.rpc.service.impl.HttpRpcReply;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;

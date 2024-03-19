@@ -1,8 +1,6 @@
 package org.rpc.service;
 
 import org.rpc.service.model.*;
-import org.rpc.processor.RpcBuilder;
-import org.rpc.processor.RpcReply;
 import org.rpc.service.model.ConversationReply.ReplyMessage;
 import org.rpc.service.model.GoogleEmbedding.GoogleEmbeddingReply;
 import org.rpc.service.model.GoogleEmbedding.ModelContent;

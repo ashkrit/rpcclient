@@ -1,4 +1,4 @@
-package org.rpc.processor;
+package org.rpc.service;
 
 import java.lang.reflect.Proxy;
 

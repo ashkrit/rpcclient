@@ -2,7 +2,6 @@ package org.rpc.service;
 
 
 import org.rpc.http.*;
-import org.rpc.processor.RpcReply;
 import org.rpc.service.model.OpenAIEmbedding;
 
 import static org.rpc.service.model.OpenAIEmbedding.*;

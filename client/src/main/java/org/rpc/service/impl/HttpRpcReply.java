@@ -1,10 +1,10 @@
-package org.rpc.processor.impl;
+package org.rpc.service.impl;
 
 import com.google.gson.Gson;
 import org.rpc.http.client.XHttpClient;
 import org.rpc.http.client.XHttpClient.XHttpClientCallback;
 import org.rpc.http.client.XHttpClient.XHttpResponse;
-import org.rpc.processor.RpcReply;
+import org.rpc.service.RpcReply;
 
 import java.util.Optional;
 

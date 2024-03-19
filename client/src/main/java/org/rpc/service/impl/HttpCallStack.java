@@ -1,4 +1,4 @@
-package org.rpc.processor.impl;
+package org.rpc.service.impl;
 
 import org.rpc.http.XGET;
 import org.rpc.http.XPOST;
