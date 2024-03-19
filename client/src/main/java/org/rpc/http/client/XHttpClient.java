@@ -5,6 +5,8 @@ import java.util.Optional;
 
 public interface XHttpClient {
 
+    int CODE_OK = 200;
+
     void get(String url, Map<String, String> headers, XHttpClientCallback callback);
 
     void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback);

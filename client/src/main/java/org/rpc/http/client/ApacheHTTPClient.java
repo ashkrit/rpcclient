@@ -18,7 +18,7 @@ public class ApacheHTTPClient implements XHttpClient {
 
     private final Logger logger = LoggerFactory.getLogger(ApacheHTTPClient.class);
 
-    public static final int CODE_OK = 200;
+
 
     @Override
     public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {

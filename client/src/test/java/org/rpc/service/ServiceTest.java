@@ -1,20 +1,26 @@
 package org.rpc.service;
 
+import org.rpc.http.ClientApp.Embedding;
 import org.rpc.processor.RpcBuilder;
+import org.rpc.processor.RpcReply;
+
+import java.util.Arrays;
 
 public class ServiceTest {
 
     public static void main(String[] args) {
 
-        RpcBuilder builder = new RpcBuilder()
-                .serviceUrl("http://localhost:9000");
+        RpcBuilder builder = new RpcBuilder().serviceUrl("http://localhost:9090");
 
-        SampleService s = builder.create(SampleService.class);
+        EmbeddingService s = builder.create(EmbeddingService.class);
 
         System.out.println(s);
 
-        System.out.println(s.list());
-        System.out.println(s.embeddings("100","99999" , new Embedding("sentence","what is LLM")));
-        System.out.println(s.search("google"));
+        RpcReply<ModelInfo> list = s.list();
+        System.out.println(list.value().models);
+
+        Embedding e = new Embedding("google", "embedding-001", "How are you");
+        System.out.println(Arrays.toString(s.embedding(e).value().embedding));
+
     }
 }
