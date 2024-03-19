@@ -1,4 +1,4 @@
-package org.rpc.service;
+package org.rpc.service.model;
 
 import java.util.List;
 

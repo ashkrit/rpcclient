@@ -11,11 +11,12 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.rpc.http.client.ApacheHTTPClient;
 import org.rpc.http.client.XHttpClient;
+import org.rpc.service.model.Embedding;
+import org.rpc.service.model.OpenAIEmbedding;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ClientApp {
@@ -99,52 +100,6 @@ public class ClientApp {
             String result = EntityUtils.toString(response.getEntity());
             System.out.println(result);
             System.out.println(response.getCode());
-        }
-    }
-
-    public static class Embedding {
-        public final String provider;
-        public final String model;
-        public final String text;
-
-        public Embedding(String provider, String model, String text) {
-            this.provider = provider;
-            this.model = model;
-            this.text = text;
-        }
-
-        public static class EmbeddingReply {
-            public int len;
-            public float[] embedding;
-        }
-
-    }
-
-    public static class OpenAIEmbedding {
-        public final String model;
-        public final String input;
-
-
-        public OpenAIEmbedding(String model, String input) {
-            this.model = model;
-            this.input = input;
-        }
-
-        public static class OpenAIEmbeddingReply {
-
-            public final List<EmbeddingValue> data;
-
-            public OpenAIEmbeddingReply(List<EmbeddingValue> data) {
-                this.data = data;
-            }
-
-            public static class EmbeddingValue {
-                public final float[] embedding;
-
-                public EmbeddingValue(float[] embedding) {
-                    this.embedding = embedding;
-                }
-            }
         }
     }
 

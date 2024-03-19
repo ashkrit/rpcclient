@@ -1,11 +1,12 @@
 package org.rpc.service;
 
-import org.rpc.http.ClientApp;
-import org.rpc.http.ClientApp.Embedding;
-import org.rpc.http.ClientApp.OpenAIEmbedding;
+import org.rpc.service.model.Embedding;
+import org.rpc.service.model.OpenAIEmbedding;
 import org.rpc.processor.RpcBuilder;
 import org.rpc.processor.RpcReply;
-import org.rpc.service.GoogleEmbedding.GoogleEmbeddingReply;
+import org.rpc.service.model.GoogleEmbedding;
+import org.rpc.service.model.GoogleEmbedding.GoogleEmbeddingReply;
+import org.rpc.service.model.ModelInfo;
 
 import java.util.Arrays;
 import java.util.Collections;
