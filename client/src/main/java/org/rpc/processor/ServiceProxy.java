@@ -2,7 +2,6 @@ package org.rpc.processor;
 
 import org.rpc.http.*;
 import org.rpc.http.client.ApacheHTTPClient;
-import org.rpc.http.client.XHttpClient;
 import org.rpc.processor.impl.HttpCallStack;
 import org.rpc.processor.impl.HttpRpcReply;
 
@@ -19,7 +18,7 @@ import java.util.stream.Stream;
 
 public class ServiceProxy implements InvocationHandler {
     private final RpcBuilder builder;
-    private final XHttpClient client = new ApacheHTTPClient();
+
 
     public ServiceProxy(RpcBuilder builder) {
         this.builder = builder;
@@ -33,14 +32,14 @@ public class ServiceProxy implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-        HttpCallStack callInfo = new HttpCallStack();
+        HttpCallStack callInfo = new HttpCallStack(new ApacheHTTPClient());
 
         callInfo.returnType = returnTypes(method);
 
         _processMethodTags(method, callInfo);
         _processMethodParams(method, args, callInfo);
 
-        return new HttpRpcReply<>(callInfo,new ApacheHTTPClient());
+        return new HttpRpcReply<>(callInfo);
 
     }
 

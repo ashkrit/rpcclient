@@ -7,20 +7,18 @@ import org.rpc.http.client.XHttpClient.XHttpResponse;
 import org.rpc.processor.RpcReply;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class HttpRpcReply<T> implements RpcReply<T> {
 
-    private final HttpCallStack callInfo;
-    private final XHttpClient httpClient;
+    private final HttpCallStack rpcCallStack;
+
     private T value;
     private XHttpResponse response;
     private boolean executed = false;
 
 
-    public HttpRpcReply(HttpCallStack callInfo, XHttpClient httpClient) {
-        this.callInfo = callInfo;
-        this.httpClient = httpClient;
+    public HttpRpcReply(HttpCallStack rpcCallStack) {
+        this.rpcCallStack = rpcCallStack;
     }
 
     @Override
@@ -38,22 +36,14 @@ public class HttpRpcReply<T> implements RpcReply<T> {
     @Override
     public void execute() {
 
-        XHttpClientCallback clientCallback = c -> {
+        XHttpClientCallback callback = c -> {
             response = c;
             if (c.statusCode == XHttpClient.CODE_OK) {
-                value = new Gson().fromJson(c.reply, callInfo.returnType);
+                value = new Gson().fromJson(c.reply, rpcCallStack.returnType);
             }
         };
-        String method = callInfo.method;
-        String url = callInfo.buildUrl();
 
-        if (method.equalsIgnoreCase("GET")) {
-            httpClient.get(url, callInfo.headers, clientCallback);
-        } else if (method.equalsIgnoreCase("POST")) {
-            httpClient.post(url, callInfo.headers, callInfo.body, clientCallback);
-        } else {
-            throw new RuntimeException("Unsupported HTTP method: " + method);
-        }
+        rpcCallStack.execute(callback);
 
         executed = true;
     }
@@ -87,14 +77,14 @@ public class HttpRpcReply<T> implements RpcReply<T> {
 
     @Override
     public String toString() {
-        String bodyText = callInfo.body != null ? new Gson().toJson(callInfo.body) : "NA";
+        String bodyText = rpcCallStack.body != null ? new Gson().toJson(rpcCallStack.body) : "NA";
         return "HttpRpcReply{" +
-                " method='" + callInfo.method + '\'' +
-                ", header='" + callInfo.headers + '\'' +
-                ", url='" + callInfo.url + '\'' +
-                ", queryParams='" + callInfo.queryParams + '\'' +
+                " method='" + rpcCallStack.method + '\'' +
+                ", header='" + rpcCallStack.headers + '\'' +
+                ", url='" + rpcCallStack.url + '\'' +
+                ", queryParams='" + rpcCallStack.queryParams + '\'' +
                 ", body='" + bodyText + '\'' +
-                ", returnType=" + callInfo.returnType +
+                ", returnType=" + rpcCallStack.returnType +
                 '}';
     }
 }
