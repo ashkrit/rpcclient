@@ -2,6 +2,7 @@ package org.rpc.service;
 
 import org.rpc.http.*;
 import org.rpc.http.client.ApacheHTTPClient;
+import org.rpc.http.client.XHttpClient;
 import org.rpc.service.impl.HttpCallStack;
 import org.rpc.service.impl.HttpRpcReply;
 
@@ -10,6 +11,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -18,6 +20,7 @@ import java.util.stream.Stream;
 
 public class ServiceProxy implements InvocationHandler {
     private final RpcBuilder builder;
+    private final Map<Method, HttpCallStack> methodStack = new HashMap<>();
 
 
     public ServiceProxy(RpcBuilder builder) {
@@ -31,16 +34,19 @@ public class ServiceProxy implements InvocationHandler {
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
         }
+        methodStack.computeIfAbsent(method, m -> _buildCallStack(method, args));
+        HttpCallStack rpcCallStack = methodStack.get(method);
+        return new HttpRpcReply<>(rpcCallStack);
 
-        HttpCallStack callInfo = new HttpCallStack(new ApacheHTTPClient());
+    }
 
-        callInfo.returnType = returnTypes(method);
-
-        _processMethodTags(method, callInfo);
-        _processMethodParams(method, args, callInfo);
-
-        return new HttpRpcReply<>(callInfo);
-
+    private HttpCallStack _buildCallStack(Method method, Object[] args) {
+        XHttpClient client = new ApacheHTTPClient();
+        HttpCallStack callStack = new HttpCallStack(client);
+        _processMethodTags(method, callStack);
+        _processMethodParams(method, args, callStack);
+        callStack.returnType = returnTypes(method);
+        return callStack;
     }
 
     private static void _processMethodParams(Method method, Object[] args, HttpCallStack callInfo) {
