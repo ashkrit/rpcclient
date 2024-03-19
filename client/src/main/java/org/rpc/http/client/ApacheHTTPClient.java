@@ -31,7 +31,8 @@ public class ApacheHTTPClient implements XHttpClient {
 
     private void _execute(XHttpClientCallback callback, HttpUriRequest method) {
 
-        try (CloseableHttpClient httpclient = HttpClients.createDefault(); CloseableHttpResponse response = httpclient.execute(method)) {
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(method)) {
 
             int code = response.getCode();
             String reply = EntityUtils.toString(response.getEntity());

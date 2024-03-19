@@ -69,14 +69,14 @@ public class ServiceProxy implements InvocationHandler {
                 XGET methodType = (XGET) tag;
 
                 String url = String.format("%s%s", builder.serviceUrl(), methodType.value());
-                callInfo.method = "GET";
+                callInfo.method = XGET.class.getSimpleName();
                 callInfo.url = url;
 
 
             } else if (tag instanceof XPOST) {
                 XPOST methodType = (XPOST) tag;
                 String url = String.format("%s%s", builder.serviceUrl(), methodType.value());
-                callInfo.method = "POST";
+                callInfo.method = XPOST.class.getSimpleName();
                 callInfo.url = url;
             } else if (tag instanceof XHeaders) {
                 XHeaders headersParam = (XHeaders) tag;

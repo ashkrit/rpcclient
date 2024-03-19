@@ -1,5 +1,7 @@
 package org.rpc.processor.impl;
 
+import org.rpc.http.XGET;
+import org.rpc.http.XPOST;
 import org.rpc.http.client.XHttpClient;
 import org.rpc.http.client.XHttpClient.XHttpClientCallback;
 
@@ -29,8 +31,8 @@ public class HttpCallStack {
 
     public HttpCallStack(XHttpClient client) {
         this.client = client;
-        executor.put("GET", this::_get);
-        executor.put("POST", this::_post);
+        executor.put(XGET.class.getSimpleName(), this::_get);
+        executor.put(XPOST.class.getSimpleName(), this::_post);
     }
 
     public String buildUrl() {
@@ -57,8 +59,10 @@ public class HttpCallStack {
     public void execute(XHttpClientCallback callback) {
 
         Optional<Consumer<XHttpClientCallback>> executorFn = Optional.ofNullable(executor.get(method));
+
         executorFn
                 .ifPresent(executor -> executor.accept(callback));
+
         executorFn
                 .orElseThrow(() -> new RuntimeException("Unsupported HTTP method: " + method));
 

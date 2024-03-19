@@ -30,7 +30,7 @@ public interface XHttpClient {
         }
 
         public static XHttpResponse success(String reply) {
-            return new XHttpResponse(200, reply, null, null);
+            return new XHttpResponse(CODE_OK, reply, null, null);
         }
 
         public static XHttpResponse error(int code, String error) {

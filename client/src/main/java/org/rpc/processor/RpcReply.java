@@ -12,7 +12,7 @@ public interface RpcReply<T> {
 
     boolean isSuccess();
 
-    public Optional<String> reply();
+    Optional<String> reply();
 
     Optional<String> error();
 

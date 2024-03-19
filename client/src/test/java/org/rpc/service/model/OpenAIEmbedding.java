@@ -1,7 +1,5 @@
 package org.rpc.service.model;
 
-import org.rpc.http.ClientApp;
-
 import java.util.List;
 
 public class OpenAIEmbedding {
