@@ -49,14 +49,16 @@ public class ServiceProxy implements InvocationHandler {
 
         for (int index = 0; index < methodParams.size(); index++) {
             Annotation param = methodParams.get(index);
+            Object argValue = args[index];
+
             if (param instanceof XHeader) {
                 XHeader headerParam = (XHeader) param;
-                callInfo.headers.put(headerParam.value(), args[index].toString());
+                callInfo.headers.put(headerParam.value(), argValue.toString());
             } else if (param instanceof XQuery) {
                 XQuery queryParam = (XQuery) param;
-                callInfo.queryParams.put(queryParam.value(), args[index].toString());
+                callInfo.queryParams.put(queryParam.value(), argValue.toString());
             } else if (param instanceof XBody) {
-                callInfo.body = args[index];
+                callInfo.body = argValue;
             }
         }
     }
@@ -68,16 +70,15 @@ public class ServiceProxy implements InvocationHandler {
             if (tag instanceof XGET) {
                 XGET methodType = (XGET) tag;
 
-                String url = String.format("%s%s", builder.serviceUrl(), methodType.value());
                 callInfo.method = XGET.class.getSimpleName();
-                callInfo.url = url;
+                callInfo.url = String.format("%s%s", builder.serviceUrl(), methodType.value());
 
 
             } else if (tag instanceof XPOST) {
                 XPOST methodType = (XPOST) tag;
-                String url = String.format("%s%s", builder.serviceUrl(), methodType.value());
                 callInfo.method = XPOST.class.getSimpleName();
-                callInfo.url = url;
+                callInfo.url = String.format("%s%s", builder.serviceUrl(), methodType.value());
+
             } else if (tag instanceof XHeaders) {
                 XHeaders headersParam = (XHeaders) tag;
                 callInfo.headers.putAll(_headers(headersParam));
