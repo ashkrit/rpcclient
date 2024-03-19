@@ -3,10 +3,14 @@ package org.rpc.service;
 import org.rpc.service.model.*;
 import org.rpc.processor.RpcBuilder;
 import org.rpc.processor.RpcReply;
+import org.rpc.service.model.ConversationReply.ReplyMessage;
 import org.rpc.service.model.GoogleEmbedding.GoogleEmbeddingReply;
+import org.rpc.service.model.GoogleEmbedding.ModelContent;
+import org.rpc.service.model.GoogleEmbedding.ModelPart;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class ServiceTest {
 
@@ -15,22 +19,25 @@ public class ServiceTest {
         //_local();
         //_google();
         //_openAI();
-        _groq();
+        _groq("llama2-70b-4096");
+        _groq("mixtral-8x7b-32768");
+        _groq("gemma-7b-it");
 
     }
 
-    private static void _groq() {
+    private static void _groq(String modelName) {
         RpcBuilder builder = new RpcBuilder().serviceUrl("https://api.groq.com/");
         GroqService service = builder.create(GroqService.class);
 
-        Conversation conversation = new Conversation("llama2-70b-4096", 1.0f, false);
+        Conversation conversation = new Conversation(modelName, 1.0f, false);
         conversation.append("user", "What is prompt Engineering");
 
         RpcReply<ConversationReply> reply = service.ask("Bearer " + System.getenv("gorq_key"), conversation);
         reply.execute();
 
         if (reply.isSuccess()) {
-            System.out.println(reply.value().choices.get(0).message.content);
+            List<ReplyMessage> choices = reply.value().choices;
+            System.out.println(choices.get(0).message.content);
         } else {
             System.out.println(reply.error());
             System.out.println(reply.exception());
@@ -75,8 +82,7 @@ public class ServiceTest {
     }
 
     private static GoogleEmbedding createGEmbeddings(String text, String modelName) {
-        GoogleEmbedding.ModelPart part = new GoogleEmbedding.ModelPart(text);
-        GoogleEmbedding.ModelContent content = new GoogleEmbedding.ModelContent(Collections.singletonList(part));
+        ModelContent content = new ModelContent(Collections.singletonList(new ModelPart(text)));
         return new GoogleEmbedding(modelName, content);
     }
 
