@@ -14,8 +14,6 @@ public class ServiceTest {
 
         EmbeddingService s = builder.create(EmbeddingService.class);
 
-        System.out.println(s);
-
         RpcReply<ModelInfo> list = s.list();
         System.out.println(list.value().models);
 

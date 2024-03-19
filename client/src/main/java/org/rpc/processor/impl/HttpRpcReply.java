@@ -57,7 +57,7 @@ public class HttpRpcReply<T> implements RpcReply<T> {
 
     private String _buildUrl() {
         String url = callInfo.url;
-        if (callInfo.queryParams != null) {
+        if (callInfo.queryParams != null && !callInfo.queryParams.isEmpty()) {
             String params = callInfo.queryParams
                     .entrySet()
                     .stream()
