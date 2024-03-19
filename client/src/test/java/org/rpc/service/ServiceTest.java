@@ -23,7 +23,7 @@ public class ServiceTest {
         RpcBuilder builder = new RpcBuilder().serviceUrl("https://api.groq.com/");
         GroqService service = builder.create(GroqService.class);
 
-        Conversation conversation = new Conversation("llama2-70b-4096", 0.5f, false);
+        Conversation conversation = new Conversation("llama2-70b-4096", 1.0f, false);
         conversation.append("user", "What is prompt Engineering");
 
         RpcReply<ConversationReply> reply = service.ask("Bearer " + System.getenv("gorq_key"), conversation);
