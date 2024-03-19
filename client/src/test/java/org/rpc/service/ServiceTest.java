@@ -7,6 +7,7 @@ import org.rpc.service.model.ConversationReply.ReplyMessage;
 import org.rpc.service.model.GoogleEmbedding.GoogleEmbeddingReply;
 import org.rpc.service.model.GoogleEmbedding.ModelContent;
 import org.rpc.service.model.GoogleEmbedding.ModelPart;
+import org.rpc.service.model.OpenAIEmbedding.OpenAIEmbeddingReply;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,11 +47,11 @@ public class ServiceTest {
 
     private static void _openAI() {
         RpcBuilder builder = new RpcBuilder().serviceUrl("https://api.openai.com/");
-        OpenAIService openAIService = builder.create(OpenAIService.class);
+        OpenAIService service = builder.create(OpenAIService.class);
 
         OpenAIEmbedding openAIEmbedding = new OpenAIEmbedding("text-embedding-3-small", "How are you");
         String apiKey = "Bearer " + System.getenv("gpt_key");
-        RpcReply<OpenAIEmbedding.OpenAIEmbeddingReply> reply = openAIService.embedding(apiKey, openAIEmbedding);
+        RpcReply<OpenAIEmbeddingReply> reply = service.embedding(apiKey, openAIEmbedding);
 
         reply.execute();
 
@@ -66,9 +67,9 @@ public class ServiceTest {
 
     private static void _google() {
         RpcBuilder builder = new RpcBuilder().serviceUrl("https://generativelanguage.googleapis.com");
-        GoogleAIService googleAIService = builder.create(GoogleAIService.class);
+        GoogleAIService service = builder.create(GoogleAIService.class);
 
-        RpcReply<GoogleEmbeddingReply> reply = googleAIService
+        RpcReply<GoogleEmbeddingReply> reply = service
                 .embedding(System.getenv("gemma_key"), createGEmbeddings("how are you", "models/embedding-001"));
 
         reply.execute();
@@ -89,12 +90,17 @@ public class ServiceTest {
     private static void _local() {
         RpcBuilder builder = new RpcBuilder().serviceUrl("http://localhost:9090/");
 
-        EmbeddingService s = builder.create(EmbeddingService.class);
+        EmbeddingService service = builder.create(EmbeddingService.class);
 
-        RpcReply<ModelInfo> list = s.list();
+        RpcReply<ModelInfo> list = service.list();
+        list.execute();
+
         System.out.println(list.value().models);
 
         Embedding e = new Embedding("google", "embedding-001", "How are you");
-        System.out.println(Arrays.toString(s.embedding(e).value().embedding));
+        RpcReply<Embedding.EmbeddingReply> embedding = service.embedding(e);
+        embedding.execute();
+
+        System.out.println(Arrays.toString(embedding.value().embedding));
     }
 }
