@@ -41,7 +41,7 @@ public class ClientApp {
         OpenAIEmbedding openAIEmbedding = new OpenAIEmbedding("text-embedding-3-small", "How are you");
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        //headers.put("Authorization", "Bearer " + System.getenv("gpt_key"));
+        headers.put("Authorization", "Bearer " + System.getenv("gpt_key"));
 
         client.post("https://api.openai.com/v1/embeddings", headers, openAIEmbedding, c -> {
             System.out.println(c.statusCode);
