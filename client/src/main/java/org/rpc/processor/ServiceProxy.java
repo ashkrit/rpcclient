@@ -3,7 +3,7 @@ package org.rpc.processor;
 import org.rpc.http.*;
 import org.rpc.http.client.ApacheHTTPClient;
 import org.rpc.http.client.XHttpClient;
-import org.rpc.processor.impl.HttpRPCCallInfo;
+import org.rpc.processor.impl.HttpCallStack;
 import org.rpc.processor.impl.HttpRpcReply;
 
 import java.lang.annotation.Annotation;
@@ -33,7 +33,7 @@ public class ServiceProxy implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-        HttpRPCCallInfo callInfo = new HttpRPCCallInfo();
+        HttpCallStack callInfo = new HttpCallStack();
 
         callInfo.returnType = returnTypes(method);
 
@@ -44,7 +44,7 @@ public class ServiceProxy implements InvocationHandler {
 
     }
 
-    private static void _processMethodParams(Method method, Object[] args, HttpRPCCallInfo callInfo) {
+    private static void _processMethodParams(Method method, Object[] args, HttpCallStack callInfo) {
         Annotation[][] tags = method.getParameterAnnotations();
         List<Annotation> methodParams = Stream.of(tags).flatMap(Stream::of).collect(Collectors.toList());
 
@@ -62,7 +62,7 @@ public class ServiceProxy implements InvocationHandler {
         }
     }
 
-    private void _processMethodTags(Method method, HttpRPCCallInfo callInfo) {
+    private void _processMethodTags(Method method, HttpCallStack callInfo) {
         Annotation[] tags = method.getDeclaredAnnotations();
         for (Annotation tag : tags) {
 

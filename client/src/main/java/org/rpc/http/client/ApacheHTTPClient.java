@@ -19,7 +19,6 @@ public class ApacheHTTPClient implements XHttpClient {
     private final Logger logger = LoggerFactory.getLogger(ApacheHTTPClient.class);
 
 
-
     @Override
     public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
 
@@ -50,6 +49,9 @@ public class ApacheHTTPClient implements XHttpClient {
 
     @Override
     public void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback) {
+
+        logger.info("Calling {}", url);
+
         HttpPost postMethod = new HttpPost(url);
         headers.forEach(postMethod::addHeader);
         postMethod.setEntity(new StringEntity(new Gson().toJson(body)));

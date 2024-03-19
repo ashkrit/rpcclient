@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 
 public class HttpRpcReply<T> implements RpcReply<T> {
 
-    private final HttpRPCCallInfo callInfo;
+    private final HttpCallStack callInfo;
     private final XHttpClient httpClient;
     private T value;
     private XHttpResponse response;
     private boolean executed = false;
 
 
-    public HttpRpcReply(HttpRPCCallInfo callInfo, XHttpClient httpClient) {
+    public HttpRpcReply(HttpCallStack callInfo, XHttpClient httpClient) {
         this.callInfo = callInfo;
         this.httpClient = httpClient;
     }
@@ -45,29 +45,19 @@ public class HttpRpcReply<T> implements RpcReply<T> {
             }
         };
         String method = callInfo.method;
+        String url = callInfo.buildUrl();
+
         if (method.equalsIgnoreCase("GET")) {
-            httpClient.get(_buildUrl(), callInfo.headers, clientCallback);
+            httpClient.get(url, callInfo.headers, clientCallback);
         } else if (method.equalsIgnoreCase("POST")) {
-            httpClient.post(_buildUrl(), callInfo.headers, callInfo.body, clientCallback);
+            httpClient.post(url, callInfo.headers, callInfo.body, clientCallback);
         } else {
             throw new RuntimeException("Unsupported HTTP method: " + method);
         }
+
         executed = true;
     }
 
-    private String _buildUrl() {
-        String url = callInfo.url;
-        if (callInfo.queryParams != null && !callInfo.queryParams.isEmpty()) {
-            String params = callInfo.queryParams
-                    .entrySet()
-                    .stream()
-                    .map(entry -> entry.getKey() + "=" + entry.getValue())
-                    .collect(Collectors.joining("&"));
-            url += "?";
-            url += params;
-        }
-        return url;
-    }
 
     @Override
     public int statusCode() {

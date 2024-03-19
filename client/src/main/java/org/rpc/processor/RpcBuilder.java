@@ -18,6 +18,6 @@ public class RpcBuilder {
     }
 
     public String serviceUrl() {
-        return serviceUrl.endsWith("/") ? serviceUrl : serviceUrl + "/";
+        return serviceUrl.endsWith("/") ? serviceUrl.substring(0, serviceUrl.length() - 1) : serviceUrl;
     }
 }
