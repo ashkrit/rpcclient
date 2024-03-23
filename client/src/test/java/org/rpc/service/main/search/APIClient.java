@@ -35,11 +35,11 @@ public class APIClient {
 
         key = System.getenv("duckduck_go");
 
-        RpcReply<Map<String, Object>> duckSearch = duckGoService.search(key, "duckduckgo", "large language model", "us-en");
+        RpcReply<Map<String, Object>> duckSearch = duckGoService.search(key, "duckduckgo", "large language model");
         duckSearch.execute();
         System.out.println(duckSearch.value());
 
-        RpcReply<DuckDuckGoSearchResult> duckFind = duckGoService.query(key, "duckduckgo", "large language model", "us-en");
+        RpcReply<DuckDuckGoSearchResult> duckFind = duckGoService.query(key, "google", "large language model");
         duckFind.execute();
         System.out.println(duckFind.value().organic_results);
 

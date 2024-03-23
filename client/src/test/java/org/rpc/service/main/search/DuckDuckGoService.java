@@ -10,9 +10,9 @@ import java.util.Map;
 public interface DuckDuckGoService {
     @XGET("/search.json")
     @XHeaders({"Content-Type: application/json"})
-    RpcReply<Map<String, Object>> search(@XQuery("api_key") String apiKey, @XQuery("engine") String engine, @XQuery(value = "q", encoded = true) String searchTerm, @XQuery(value = "kl", encoded = true) String lang);
+    RpcReply<Map<String, Object>> search(@XQuery("api_key") String apiKey, @XQuery("engine") String engine, @XQuery(value = "q", encoded = true) String searchTerm);
 
     @XGET("/search.json")
     @XHeaders({"Content-Type: application/json"})
-    RpcReply<DuckDuckGoSearchResult> query(@XQuery("api_key") String apiKey, @XQuery("engine") String engine, @XQuery(value = "q", encoded = true) String searchTerm, @XQuery(value = "kl", encoded = true) String lang);
+    RpcReply<DuckDuckGoSearchResult> query(@XQuery("api_key") String apiKey, @XQuery("engine") String engine, @XQuery(value = "q", encoded = true) String searchTerm);
 }
