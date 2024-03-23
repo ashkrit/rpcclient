@@ -29,19 +29,7 @@ public class ServiceProxyTest {
 
         RpcBuilder builder = new RpcBuilder()
                 .serviceUrl("http://nohost.com/")
-                .client(new XHttpClient() {
-                    @Override
-                    public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
-                        callParams.putAll(headers);
-                        callParams.put("url", url);
-                        callback.onComplete(XHttpResponse.success(new Gson().toJson(modelInfo)));
-                    }
-
-                    @Override
-                    public void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback) {
-
-                    }
-                });
+                .client(newClient(callParams, modelInfo));
 
         SuperService service = builder.create(SuperService.class);
 
@@ -59,6 +47,22 @@ public class ServiceProxyTest {
 
     }
 
+    private static XHttpClient newClient(Map<String, String> callParams, Object getReply) {
+        return new XHttpClient() {
+            @Override
+            public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
+                callParams.putAll(headers);
+                callParams.put("url", url);
+                callback.onComplete(XHttpResponse.success(new Gson().toJson(getReply)));
+            }
+
+            @Override
+            public void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback) {
+
+            }
+        };
+    }
+
     @Test
     public void verify_get_with_params() {
         ModelInfo m = new ModelInfo();
@@ -67,19 +71,7 @@ public class ServiceProxyTest {
 
         RpcBuilder builder = new RpcBuilder()
                 .serviceUrl("http://nohost.com/")
-                .client(new XHttpClient() {
-                    @Override
-                    public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
-                        callParams.putAll(headers);
-                        callParams.put("url", url);
-                        callback.onComplete(XHttpResponse.success(new Gson().toJson(m)));
-                    }
-
-                    @Override
-                    public void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback) {
-
-                    }
-                });
+                .client(newClient(callParams, m));
 
         SuperService service = builder.create(SuperService.class);
         RpcReply<ModelInfo> reply = service.list("meta");
@@ -101,19 +93,7 @@ public class ServiceProxyTest {
 
         RpcBuilder builder = new RpcBuilder()
                 .serviceUrl("http://nohost.com/")
-                .client(new XHttpClient() {
-                    @Override
-                    public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
-                        callParams.putAll(headers);
-                        callParams.put("url", url);
-                        callback.onComplete(XHttpResponse.success(new Gson().toJson(m)));
-                    }
-
-                    @Override
-                    public void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback) {
-
-                    }
-                });
+                .client(newClient(callParams, m));
 
         SuperService service = builder.create(SuperService.class);
         RpcReply<ModelInfo> reply = service.query("meta", "123");
