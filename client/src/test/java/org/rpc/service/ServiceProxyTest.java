@@ -3,10 +3,7 @@ package org.rpc.service;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.rpc.http.XBody;
-import org.rpc.http.XGET;
-import org.rpc.http.XHeaders;
-import org.rpc.http.XPOST;
+import org.rpc.http.*;
 import org.rpc.http.client.XHttpClient;
 import org.rpc.service.main.model.Embedding;
 import org.rpc.service.main.model.ModelInfo;
@@ -63,10 +60,48 @@ public class ServiceProxyTest {
 
     }
 
+    @Test
+    public void verify_get_with_params() {
+        ModelInfo m = new ModelInfo();
+
+        Map<String, String> callParams = new HashMap<>();
+
+        RpcBuilder builder = new RpcBuilder()
+                .serviceUrl("http://nohost.com/")
+                .client(new XHttpClient() {
+                    @Override
+                    public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
+                        callParams.putAll(headers);
+                        callParams.put("url", url);
+                        callback.onComplete(XHttpResponse.success(new Gson().toJson(m)));
+                    }
+
+                    @Override
+                    public void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback) {
+
+                    }
+                });
+
+        SuperService service = builder.create(SuperService.class);
+        RpcReply<ModelInfo> reply = service.list("meta");
+
+        reply.execute();
+
+        assertAll(
+                () -> assertEquals("http://nohost.com/search?q=meta", callParams.get("url"))
+        );
+
+
+    }
+
     public interface SuperService {
         @XGET("/list")
         @XHeaders({"Content-Type: application/json"})
         RpcReply<ModelInfo> list();
+
+        @XGET("/search")
+        @XHeaders({"Content-Type: application/json"})
+        RpcReply<ModelInfo> list(@XQuery("q") String query);
 
 
         @XPOST("/embedding")
