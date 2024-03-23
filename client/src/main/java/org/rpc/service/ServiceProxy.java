@@ -6,11 +6,13 @@ import org.rpc.http.client.XHttpClient;
 import org.rpc.service.impl.HttpCallStack;
 import org.rpc.service.impl.HttpRpcReply;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class ServiceProxy implements InvocationHandler {
         return callStack;
     }
 
-    private static void _processMethodParams(Method method, Object[] args, HttpCallStack callInfo) {
+    private void _processMethodParams(Method method, Object[] args, HttpCallStack callInfo) {
         Annotation[][] tags = method.getParameterAnnotations();
         List<Annotation> methodParams = Stream.of(tags).flatMap(Stream::of).collect(Collectors.toList());
 
@@ -62,7 +64,8 @@ public class ServiceProxy implements InvocationHandler {
                 callInfo.headers.put(headerParam.value(), argValue.toString());
             } else if (param instanceof XQuery) {
                 XQuery queryParam = (XQuery) param;
-                callInfo.queryParams.put(queryParam.value(), argValue.toString());
+                String value = queryParam.encoded() ? encode(argValue.toString()) : argValue.toString();
+                callInfo.queryParams.put(queryParam.value(), value);
             } else if (param instanceof XBody) {
                 callInfo.body = argValue;
             }
@@ -92,19 +95,29 @@ public class ServiceProxy implements InvocationHandler {
         }
     }
 
-    private static Type returnTypes(Method method) {
+    private Type returnTypes(Method method) {
         ParameterizedType returnType = (ParameterizedType) method.getGenericReturnType();
         return returnType.getActualTypeArguments()[0];
     }
 
-    private static Map<String, String> _headers(XHeaders headers) {
+    private Map<String, String> _headers(XHeaders headers) {
         return Stream.of(headers.value())
                 .map(_parseHeader())
                 .collect(Collectors.toMap(x -> x[0], x -> x[1].trim()));
     }
 
-    private static Function<String, String[]> _parseHeader() {
+    private Function<String, String[]> _parseHeader() {
         return x -> x.split(":");
+    }
+
+
+    private String encode(String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

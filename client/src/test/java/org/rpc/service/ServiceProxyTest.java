@@ -125,6 +125,6 @@ public class ServiceProxyTest {
 
         @XPOST("/embedding")
         @XHeaders({"Content-Type: application/json"})
-        RpcReply<EmbeddingReply> embedding(@XBody Embedding embedding);
+        RpcReply<EmbeddingReply> embedding(@XHeader("Authorization") String key, @XBody Embedding embedding);
     }
 }
