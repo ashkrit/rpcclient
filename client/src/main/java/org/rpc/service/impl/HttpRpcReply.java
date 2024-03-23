@@ -39,7 +39,11 @@ public class HttpRpcReply<T> implements RpcReply<T> {
         XHttpClientCallback callback = c -> {
             response = c;
             if (c.statusCode == XHttpClient.CODE_OK) {
-                value = new Gson().fromJson(c.reply, rpcCallStack.returnType);
+                if (rpcCallStack.returnType == String.class) {
+                    value = (T) c.reply;
+                } else {
+                    value = new Gson().fromJson(c.reply, rpcCallStack.returnType);
+                }
             }
         };
 
