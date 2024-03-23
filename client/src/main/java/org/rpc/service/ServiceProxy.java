@@ -27,6 +27,7 @@ public class ServiceProxy implements InvocationHandler {
         this.builder = builder;
     }
 
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
@@ -41,8 +42,7 @@ public class ServiceProxy implements InvocationHandler {
     }
 
     private HttpCallStack _buildCallStack(Method method, Object[] args) {
-        XHttpClient client = new ApacheHTTPClient();
-        HttpCallStack callStack = new HttpCallStack(client);
+        HttpCallStack callStack = new HttpCallStack(builder.client());
         _processMethodTags(method, callStack);
         _processMethodParams(method, args, callStack);
         callStack.returnType = returnTypes(method);
