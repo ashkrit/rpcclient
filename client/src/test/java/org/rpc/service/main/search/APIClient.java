@@ -30,6 +30,18 @@ public class APIClient {
 
         searchResults.value().items.forEach(System.out::println);
 
+        RpcBuilder searchBuilder = new RpcBuilder().serviceUrl("https://serpapi.com");
+        DuckDuckGoService duckGoService = searchBuilder.create(DuckDuckGoService.class);
+
+        key = System.getenv("duckduck_go");
+
+        RpcReply<Map<String, Object>> duckSearch = duckGoService.search(key, "duckduckgo", "large language model", "us-en");
+        duckSearch.execute();
+        System.out.println(duckSearch.value());
+
+        RpcReply<DuckDuckGoSearchResult> duckFind = duckGoService.query(key, "duckduckgo", "large language model", "us-en");
+        duckFind.execute();
+        System.out.println(duckFind.value().organic_results);
 
 
     }
