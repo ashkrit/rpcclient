@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ServiceTest {
+public class ServiceApp {
 
     public static void main(String[] args) {
 

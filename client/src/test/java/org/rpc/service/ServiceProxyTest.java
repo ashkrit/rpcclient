@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.rpc.http.*;
 import org.rpc.http.client.XHttpClient;
 import org.rpc.service.main.model.Embedding;
+import org.rpc.service.main.model.Embedding.EmbeddingReply;
 import org.rpc.service.main.model.ModelInfo;
 
 import java.util.ArrayList;
@@ -124,6 +125,6 @@ public class ServiceProxyTest {
 
         @XPOST("/embedding")
         @XHeaders({"Content-Type: application/json"})
-        RpcReply<Embedding.EmbeddingReply> embedding(@XBody Embedding embedding);
+        RpcReply<EmbeddingReply> embedding(@XBody Embedding embedding);
     }
 }
