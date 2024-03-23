@@ -1,6 +1,4 @@
-package org.rpc.service.model;
-
-import org.rpc.service.model.Conversation.Message;
+package org.rpc.service.main.model;
 
 import java.util.List;
 
@@ -15,9 +13,9 @@ public class ConversationReply {
 
     public static class ReplyMessage {
         public final int index;
-        public final Message message;
+        public final Conversation.Message message;
 
-        public ReplyMessage(int index, Message message) {
+        public ReplyMessage(int index, Conversation.Message message) {
             this.index = index;
             this.message = message;
         }

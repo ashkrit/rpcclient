@@ -1,11 +1,13 @@
-package org.rpc.service;
+package org.rpc.service.main;
 
-import org.rpc.service.model.*;
-import org.rpc.service.model.ConversationReply.ReplyMessage;
-import org.rpc.service.model.GoogleEmbedding.GoogleEmbeddingReply;
-import org.rpc.service.model.GoogleEmbedding.ModelContent;
-import org.rpc.service.model.GoogleEmbedding.ModelPart;
-import org.rpc.service.model.OpenAIEmbedding.OpenAIEmbeddingReply;
+import org.rpc.service.*;
+import org.rpc.service.main.model.*;
+
+import org.rpc.service.main.model.ConversationReply.ReplyMessage;
+import org.rpc.service.main.model.GoogleEmbedding.GoogleEmbeddingReply;
+import org.rpc.service.main.model.GoogleEmbedding.ModelContent;
+import org.rpc.service.main.model.GoogleEmbedding.ModelPart;
+import org.rpc.service.main.model.OpenAIEmbedding.OpenAIEmbeddingReply;
 
 import java.util.Arrays;
 import java.util.Collections;

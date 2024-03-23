@@ -1,9 +1,10 @@
-package org.rpc.service;
+package org.rpc.service.main;
 
 import org.rpc.http.*;
-import org.rpc.service.model.Embedding;
-import org.rpc.service.model.Embedding.EmbeddingReply;
-import org.rpc.service.model.ModelInfo;
+import org.rpc.service.RpcReply;
+import org.rpc.service.main.model.Embedding;
+import org.rpc.service.main.model.Embedding.EmbeddingReply;
+import org.rpc.service.main.model.ModelInfo;
 
 public interface EmbeddingService {
 

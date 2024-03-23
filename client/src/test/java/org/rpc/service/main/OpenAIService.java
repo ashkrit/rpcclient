@@ -1,10 +1,11 @@
-package org.rpc.service;
+package org.rpc.service.main;
 
 
 import org.rpc.http.*;
-import org.rpc.service.model.OpenAIEmbedding;
+import org.rpc.service.RpcReply;
+import org.rpc.service.main.model.OpenAIEmbedding;
 
-import static org.rpc.service.model.OpenAIEmbedding.*;
+import static org.rpc.service.main.model.OpenAIEmbedding.*;
 
 public interface OpenAIService {
 

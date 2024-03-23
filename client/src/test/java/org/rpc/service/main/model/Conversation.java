@@ -1,4 +1,4 @@
-package org.rpc.service.model;
+package org.rpc.service.main.model;
 
 import java.util.ArrayList;
 import java.util.List;

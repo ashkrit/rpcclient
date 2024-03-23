@@ -11,9 +11,9 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.rpc.http.client.ApacheHTTPClient;
 import org.rpc.http.client.XHttpClient;
-import org.rpc.service.model.Conversation;
-import org.rpc.service.model.Embedding;
-import org.rpc.service.model.OpenAIEmbedding;
+import org.rpc.service.main.model.Conversation;
+import org.rpc.service.main.model.Embedding;
+import org.rpc.service.main.model.OpenAIEmbedding;
 
 import java.io.IOException;
 import java.util.Collections;

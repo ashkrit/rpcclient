@@ -1,4 +1,4 @@
-package org.rpc.service.model;
+package org.rpc.service.main.model;
 
 public class Embedding {
     public final String provider;

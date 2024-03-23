@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.rpc.http.client.XHttpClient;
-import org.rpc.service.model.ModelInfo;
+import org.rpc.service.main.EmbeddingService;
+import org.rpc.service.main.model.ModelInfo;
 
 import java.util.ArrayList;
 import java.util.Map;
