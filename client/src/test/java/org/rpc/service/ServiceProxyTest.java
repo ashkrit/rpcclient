@@ -34,7 +34,6 @@ public class ServiceProxyTest {
                     public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
                         callParams.putAll(headers);
                         callParams.put("url", url);
-
                         callback.onComplete(XHttpResponse.success(new Gson().toJson(modelInfo)));
                     }
 
@@ -94,6 +93,41 @@ public class ServiceProxyTest {
 
     }
 
+    @Test
+    public void verify_get_with_params_and_headers() {
+        ModelInfo m = new ModelInfo();
+
+        Map<String, String> callParams = new HashMap<>();
+
+        RpcBuilder builder = new RpcBuilder()
+                .serviceUrl("http://nohost.com/")
+                .client(new XHttpClient() {
+                    @Override
+                    public void get(String url, Map<String, String> headers, XHttpClientCallback callback) {
+                        callParams.putAll(headers);
+                        callParams.put("url", url);
+                        callback.onComplete(XHttpResponse.success(new Gson().toJson(m)));
+                    }
+
+                    @Override
+                    public void post(String url, Map<String, String> headers, Object body, XHttpClientCallback callback) {
+
+                    }
+                });
+
+        SuperService service = builder.create(SuperService.class);
+        RpcReply<ModelInfo> reply = service.query("meta", "123");
+
+        reply.execute();
+
+        assertAll(
+                () -> assertEquals("http://nohost.com/search?q=meta", callParams.get("url")),
+                () -> assertEquals("123", callParams.get("Authorization"))
+        );
+
+
+    }
+
     public interface SuperService {
         @XGET("/list")
         @XHeaders({"Content-Type: application/json"})
@@ -102,6 +136,10 @@ public class ServiceProxyTest {
         @XGET("/search")
         @XHeaders({"Content-Type: application/json"})
         RpcReply<ModelInfo> list(@XQuery("q") String query);
+
+        @XGET("/search")
+        @XHeaders({"Content-Type: application/json"})
+        RpcReply<ModelInfo> query(@XQuery("q") String query, @XHeader("Authorization") String t);
 
 
         @XPOST("/embedding")
