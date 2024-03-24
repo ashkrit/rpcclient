@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class HttpCallStack {
@@ -43,10 +44,14 @@ public class HttpCallStack {
 
     private String _appendParams(String urlValue) {
 
-        for (Map.Entry<String, String> paths : pathParams.entrySet()) {
-            urlValue = urlValue.replace(String.format("{%s}", paths.getKey()), paths.getValue());
-        }
+        Function<String, String> pathFn = this::applyPathParams;
+        Function<String, String> urlFn = this::applyUrlParam;
 
+        return pathFn.andThen(urlFn).apply(urlValue);
+
+    }
+
+    private String applyUrlParam(String urlValue) {
         if (hasValue()) {
             String params = queryParams
                     .entrySet()
@@ -55,6 +60,13 @@ public class HttpCallStack {
                     .collect(Collectors.joining("&"));
             urlValue += "?";
             urlValue += params;
+        }
+        return urlValue;
+    }
+
+    private String applyPathParams(String urlValue) {
+        for (Map.Entry<String, String> paths : pathParams.entrySet()) {
+            urlValue = urlValue.replace(String.format("{%s}", paths.getKey()), paths.getValue());
         }
         return urlValue;
     }
