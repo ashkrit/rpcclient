@@ -20,9 +20,8 @@ public class HttpCallStack {
     public String method;
     public String url;
     public Type returnType;
-
-    public Map<String, String> headers = new HashMap<>();
-
+    public Map<String, String> headers = new LinkedHashMap<>();
+    public Map<String, String> pathParams = new LinkedHashMap<>();
     public Map<String, String> queryParams = new LinkedHashMap<>();
 
     public Object body;
@@ -30,7 +29,7 @@ public class HttpCallStack {
     private final XHttpClient client;
 
     private final Map<String, Consumer<XHttpClientCallback>> executor = new HashMap<>();
-    public Map<String, String> pathParams = new HashMap<>();
+
 
     public HttpCallStack(XHttpClient client) {
         this.client = client;
@@ -58,7 +57,7 @@ public class HttpCallStack {
                     .stream()
                     .map(entry -> entry.getKey() + "=" + entry.getValue())
                     .collect(Collectors.joining("&"));
-            urlValue += "?";
+            urlValue += urlValue.contains("?") ? "&" : "?";
             urlValue += params;
         }
         return urlValue;
@@ -66,7 +65,8 @@ public class HttpCallStack {
 
     private String applyPathParams(String urlValue) {
         for (Map.Entry<String, String> paths : pathParams.entrySet()) {
-            urlValue = urlValue.replace(String.format("{%s}", paths.getKey()), paths.getValue());
+            String token = String.format("{%s}", paths.getKey());
+            urlValue = urlValue.replace(token, paths.getValue());
         }
         return urlValue;
     }
