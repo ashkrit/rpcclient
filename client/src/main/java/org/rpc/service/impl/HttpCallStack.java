@@ -1,5 +1,6 @@
 package org.rpc.service.impl;
 
+import com.google.gson.internal.LinkedTreeMap;
 import org.rpc.http.XGET;
 import org.rpc.http.XPOST;
 import org.rpc.http.client.XHttpClient;
@@ -28,6 +29,7 @@ public class HttpCallStack {
     private final XHttpClient client;
 
     private final Map<String, Consumer<XHttpClientCallback>> executor = new HashMap<>();
+    public Map<String, String> pathParams = new HashMap<>();
 
     public HttpCallStack(XHttpClient client) {
         this.client = client;
@@ -40,6 +42,11 @@ public class HttpCallStack {
     }
 
     private String _appendParams(String urlValue) {
+
+        for (Map.Entry<String, String> paths : pathParams.entrySet()) {
+            urlValue = urlValue.replace(String.format("{%s}", paths.getKey()), paths.getValue());
+        }
+
         if (hasValue()) {
             String params = queryParams
                     .entrySet()

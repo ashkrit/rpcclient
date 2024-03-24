@@ -69,6 +69,10 @@ public class ServiceProxy implements InvocationHandler {
             } else if (param instanceof XBody) {
                 callInfo.body = argValue;
             }
+            else if(param instanceof XPath) {
+                XPath pathParam = (XPath) param;
+                callInfo.pathParams.put(pathParam.value(), argValue.toString());
+            }
         }
     }
 

@@ -106,6 +106,26 @@ public class ServiceProxyTest {
                 () -> assertEquals("123", callParams.get("Authorization"))
         );
 
+    }
+
+    @Test
+    public void verify_get_with_url_paths() {
+        ModelInfo m = new ModelInfo();
+
+        Map<String, String> callParams = new HashMap<>();
+
+        RpcBuilder builder = new RpcBuilder()
+                .serviceUrl("http://nohost.com/")
+                .client(newClient(callParams, m));
+
+        SuperService service = builder.create(SuperService.class);
+        RpcReply<String> reply = service.modelInfo("google", "bert");
+
+        reply.execute();
+
+        assertAll(
+                () -> assertEquals("http://nohost.com/embedding/google/bert", callParams.get("url"))
+        );
 
     }
 
@@ -126,5 +146,9 @@ public class ServiceProxyTest {
         @XPOST("/embedding")
         @XHeaders({"Content-Type: application/json"})
         RpcReply<EmbeddingReply> embedding(@XHeader("Authorization") String key, @XBody Embedding embedding);
+
+        @XGET("/embedding/{vendor}/{model_name}")
+        @XHeaders({"Content-Type: application/json"})
+        RpcReply<String> modelInfo(@XPath("vendor") String vendor, @XPath("model_name") String modelName);
     }
 }

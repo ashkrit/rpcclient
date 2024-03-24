@@ -19,6 +19,11 @@ public class APIClient {
 
         //_google();
         //_ddg();
+        _rawddg();
+
+    }
+
+    private static void _rawddg() {
         RpcBuilder searchBuilder = new RpcBuilder().serviceUrl("https://duckduckgo.com");
         DuckDuckGoSearch duckGoService = searchBuilder.create(DuckDuckGoSearch.class);
 
@@ -36,7 +41,6 @@ public class APIClient {
                     String link = e.getElementsByClass("result__a").attr("href");
                     System.out.println(e.text() + "->" + _processLinkURL(link));
                 });
-
     }
 
     private static String _processLinkURL(String link) {
