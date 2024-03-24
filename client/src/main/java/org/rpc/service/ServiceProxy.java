@@ -1,8 +1,6 @@
 package org.rpc.service;
 
 import org.rpc.http.*;
-import org.rpc.http.client.ApacheHTTPClient;
-import org.rpc.http.client.XHttpClient;
 import org.rpc.service.impl.HttpCallStack;
 import org.rpc.service.impl.HttpRpcReply;
 
@@ -115,17 +113,26 @@ public class ServiceProxy implements InvocationHandler {
     private String[] _resolveVariable(String[] value) {
 
         int valueOffSet = 1;
-        String paramValue = value[valueOffSet];
 
-        Pattern p = Pattern.compile(".*\\{(.*)}\\.*");
-        Matcher matcher = p.matcher(paramValue);
-        if (matcher.matches()) {
-            String name = matcher.group(1);
-            String token = String.format("{%s}", name);
-            String updatedValue = value[valueOffSet].replace(token, builder.variableResolver().apply(name));
-            value[valueOffSet] = updatedValue;
-        }
+        value[valueOffSet] = _fillVariables(value[valueOffSet]);
+
         return value;
+    }
+
+    private String _fillVariables(String paramValue) {
+        Pattern p = Pattern.compile(".*\\{(.*)}\\.*");
+
+        while (true) {
+            Matcher matcher = p.matcher(paramValue);
+            if (matcher.matches()) {
+                String name = matcher.group(1);
+                String token = String.format("{%s}", name);
+                paramValue = paramValue.replace(token, builder.variableResolver().apply(name));
+            } else {
+                return paramValue;
+            }
+        }
+
     }
 
     private Function<String, String[]> _parseHeader() {
