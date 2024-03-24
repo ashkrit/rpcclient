@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,8 +70,7 @@ public class ServiceProxy implements InvocationHandler {
                 callInfo.queryParams.put(queryParam.value(), value);
             } else if (param instanceof XBody) {
                 callInfo.body = argValue;
-            }
-            else if(param instanceof XPath) {
+            } else if (param instanceof XPath) {
                 XPath pathParam = (XPath) param;
                 callInfo.pathParams.put(pathParam.value(), argValue.toString());
             }
@@ -107,7 +108,24 @@ public class ServiceProxy implements InvocationHandler {
     private Map<String, String> _headers(XHeaders headers) {
         return Stream.of(headers.value())
                 .map(_parseHeader())
+                .map(this::_resolveVariable)
                 .collect(Collectors.toMap(x -> x[0], x -> x[1].trim()));
+    }
+
+    private String[] _resolveVariable(String[] value) {
+
+        int valueOffSet = 1;
+        String paramValue = value[valueOffSet];
+
+        Pattern p = Pattern.compile(".*\\{(.*)}\\.*");
+        Matcher matcher = p.matcher(paramValue);
+        if (matcher.matches()) {
+            String name = matcher.group(1);
+            String token = String.format("{%s}", name);
+            String updatedValue = value[valueOffSet].replace(token, builder.variableResolver().apply(name));
+            value[valueOffSet] = updatedValue;
+        }
+        return value;
     }
 
     private Function<String, String[]> _parseHeader() {

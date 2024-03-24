@@ -126,7 +126,29 @@ public class ServiceProxyTest {
         assertAll(
                 () -> assertEquals("http://nohost.com/embedding/google/bert", callParams.get("url"))
         );
+    }
 
+    @Test
+    public void verify_header_env_values() {
+        ModelInfo m = new ModelInfo();
+
+        Map<String, String> callParams = new HashMap<>();
+
+        System.setProperty("api.key", "123");
+
+        RpcBuilder builder = new RpcBuilder()
+                .serviceUrl("http://nohost.com/")
+                //.setVariableResolver(System::getenv)
+                .client(newClient(callParams, m));
+
+        SuperService service = builder.create(SuperService.class);
+        RpcReply<String> reply = service.modelInfo("google", "bert");
+
+        reply.execute();
+
+        assertAll(
+                () -> assertEquals("Bearer 123", callParams.get("Authorization"))
+        );
     }
 
     public interface SuperService {
@@ -148,7 +170,7 @@ public class ServiceProxyTest {
         RpcReply<EmbeddingReply> embedding(@XHeader("Authorization") String key, @XBody Embedding embedding);
 
         @XGET("/embedding/{vendor}/{model_name}")
-        @XHeaders({"Content-Type: application/json"})
+        @XHeaders({"Content-Type: application/json", "Authorization: Bearer {api.key}"})
         RpcReply<String> modelInfo(@XPath("vendor") String vendor, @XPath("model_name") String modelName);
     }
 }
